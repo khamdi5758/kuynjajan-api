@@ -51,12 +51,14 @@ module.exports ={
     // Simpan data pembeli
     adddatapembeli(req,res){
         var uid = crypto.generate({length: 50}) + new Date().toISOString().replace(/T/, '').replace(/\..+/, '').replace(/-/, '').replace(/-/, '').replace(/:/, '').replace(/:/, '');
+        
+
         let data = {
             id_pembeli : uid,
             nama : req.body.nama,
             jen_kel : req.body.jenkel,
             no_telp : req.body.notelp,
-            // foto : req.file.filename,
+            foto : req.file.path,
             username : req.body.username,
             password : req.body.password
         }

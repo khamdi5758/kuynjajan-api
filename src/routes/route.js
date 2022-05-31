@@ -3,28 +3,34 @@ const multer = require('multer');
 const path = require('path');
 const {pembeli,pedagang,kurir,dagangan,wishlist,orders } = require('../controllers');
 
-const storage = multer.diskStorage({
-    destination:'./src/images/',
-    filename:(req,file,cb)=> {
-        return cb(null,`${file.fieldname}_${Date.now}${path.extname(file.originalname)}`)
-    }
-});
-
-// const diskStorage = multer.diskStorage({
-//     destination: function (req, file, cb) {
-//       cb(null, path.join(__dirname, "/uploads"));
-//     },
-//     // konfigurasi penamaan file yang unik
-//     filename: function (req, file, cb) {
-//       cb(
-//         null,
-//         file.fieldname + "-" + Date.now() + path.extname(file.originalname)
-//       );
-//     },
+// const storage = multer.diskStorage({
+//     destination:'./src/images/',
+//     filename:(req,file,cb)=> {
+//         return cb(null,`${file.fieldname}_${Date.now}${path.extname(file.originalname)}`)
+//     }
 // });
 
+const diskStorage = multer.diskStorage({
+    destination:(req, file, cb) => {
+      cb(null, 'images');
+    },
+    // konfigurasi penamaan file yang unik
+    filename: (req, file, cb) => {
+      cb(null,new Date().getTime()+'-'+file.originalname);
+    },
+});
+
+const fileFilter = (req,file,cb)=>{
+    if (file.mimetype === 'image/png' || file.mimetype === 'image/jpg' || file.mimetype === 'image/jpeg') {
+        cb(null,true);
+    }else{
+        cb(null,false);
+    }
+}
+
 const upload = multer({
-    storage: storage
+    storage: diskStorage,
+    fileFilter: fileFilter
 })
  
 
@@ -37,7 +43,7 @@ const upload = multer({
 
 router.get('/pembeli/get', pembeli.getdatapembeli);
 router.get('/pembeli/get/:id', pembeli.getdatapembelibyid);
-router.post('/pembeli/add',pembeli.adddatapembeli);
+router.post('/pembeli/add',upload.single('foto'),pembeli.adddatapembeli);
 router.put('/pembeli/edit/:id', pembeli.editdatapembeli);
 router.delete('/pembeli/delete/:id', pembeli.deletedatapembeli);
 
