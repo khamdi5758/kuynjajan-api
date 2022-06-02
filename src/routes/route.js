@@ -43,28 +43,29 @@ const upload = multer({
 
 router.get('/pembeli/get', pembeli.getdatapembeli);
 router.get('/pembeli/get/:id', pembeli.getdatapembelibyid);
+router.get('/pembeli/cari/:id', pembeli.getdatapembelibyidduand);
 router.post('/pembeli/add',upload.single('foto'),pembeli.adddatapembeli);
 router.put('/pembeli/edit/:id', pembeli.editdatapembeli);
 router.delete('/pembeli/delete/:id', pembeli.deletedatapembeli);
 
 
-router.get('/pedagang', pedagang.getdatapedagang);
-router.get('/pedagang/:id', pedagang.getdatapedagangbyid);
-router.post('/pedagang/add', pedagang.adddatapedagang);
+router.get('/pedagang/get', pedagang.getdatapedagang);
+router.get('/pedagang/get/:id', pedagang.getdatapedagangbyid);
+router.post('/pedagang/add',upload.single('foto_usaha'), pedagang.adddatapedagang);
 router.put('/pedagang/edit/:id', pedagang.editdatapedagang);
 router.delete('/pedagang/delete/:id', pedagang.deletedatapedagang);
 
 
-router.get('/kurir', kurir.getdatakurir);
-router.get('/kurir/:id', kurir.getdatakurirbyid);
-router.post('/kurir/add', kurir.adddatakurir);
+router.get('/kurir/get', kurir.getdatakurir);
+router.get('/kurir/get/:id', kurir.getdatakurirbyid);
+router.post('/kurir/add',upload.single('foto_ktp'), kurir.adddatakurir);
 router.put('/kurir/edit/:id', kurir.editdatakurir);
 router.delete('/kurir/delete/:id', kurir.deletedatakurir);
 
 
-router.get('/dagangan', dagangan.getdatadagangan);
-router.get('/dagangan/:id', dagangan.getdatadaganganbyid);
-router.post('/dagangan/add', dagangan.adddatadagangan);
+router.get('/dagangan/get', dagangan.getdatadagangan);
+router.get('/dagangan/get/:id', dagangan.getdatadaganganbyid);
+router.post('/dagangan/add',upload.single('foto_dagangan'), dagangan.adddatadagangan);
 router.put('/dagangan/edit/:id', dagangan.editdatadagangan);
 router.delete('/dagangan/delete/:id', dagangan.deletedatadagangan);
 

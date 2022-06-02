@@ -42,11 +42,41 @@ module.exports ={
                 res.send({ 
                     success: true, 
                     message: 'Berhasil ambil data!',
-                    pembeli: results
+                    pembeli: results,
                 });
             });
             connection.release();
         })
+    },
+
+    getdatapembelibyidduand(req,res){
+        let id = req.params.id;
+        let namfoto;
+        pool.getConnection(function(err, connection) {
+            if (err) throw err;
+            connection.query(
+                `
+                SELECT * FROM tb_pembeli WHERE id_pembeli = ?;
+                `
+            , [id],
+            function (error, results) {
+                if(error) throw error;  
+                res.send({ 
+                    success: true, 
+                    message: 'Berhasil ambil data!',
+                    pembeli: results,
+                });
+
+                console.log(results);
+                console.log(`----------------------------------------------------------`);
+                results.forEach((data) => {
+                    namfoto = `${data.foto}`;
+                });
+                console.log(namfoto);
+            });
+            connection.release();
+        })
+        
     },
     // Simpan data pembeli
     adddatapembeli(req,res){
@@ -58,10 +88,11 @@ module.exports ={
             nama : req.body.nama,
             jen_kel : req.body.jenkel,
             no_telp : req.body.notelp,
-            foto : req.file.path,
+            foto : req.file.filename,
             username : req.body.username,
             password : req.body.password
         }
+
         pool.getConnection(function(err, connection) {
             if (err) throw err;
             connection.query(
@@ -79,18 +110,26 @@ module.exports ={
             connection.release();
         })
     },
+
     // Update data pembeli
     editdatapembeli(req,res){
+        pool.getConnection(function(err, connection) {
+        let id = req.params.id
+        let fotprof;
+
+        if (!req.file) {
+            
+        }
         let dataEdit = {
             nama : req.body.nama,
             jen_kel : req.body.jenkel,
             no_telp : req.body.notelp,
-            foto_prof : req.file.fotprof,
+            foto : fotprof,
             username : req.body.username,
             password : req.body.password
         }
-        let id = req.params.id
-        pool.getConnection(function(err, connection) {
+        
+        
             if (err) throw err;
             connection.query(
                 `

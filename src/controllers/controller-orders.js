@@ -1,6 +1,7 @@
 const config = require('../configs/database');
 const mysql = require('mysql');
 const pool = mysql.createPool(config);
+const crypto = require('randomstring');
 
 pool.on('error',(err)=> {
     console.error(err);
@@ -49,8 +50,9 @@ module.exports ={
     },
     // Simpan data orders
     adddataorders(req,res){
+        var uid = crypto.generate({length: 50}) + new Date().toISOString().replace(/T/, '').replace(/\..+/, '').replace(/-/, '').replace(/-/, '').replace(/:/, '').replace(/:/, '');
         let data = {
-            id_orders : req.body.idorder,
+            id_orders : req.body.uid,
             id_barang : req.body.idbarang,
             id_pembeli : req.body.idpembeli,
             jumlah : req.body.jumlah,

@@ -1,6 +1,8 @@
 const config = require('../configs/database');
 const mysql = require('mysql');
 const pool = mysql.createPool(config);
+const crypto = require('randomstring');
+
 
 pool.on('error',(err)=> {
     console.error(err);
@@ -49,12 +51,13 @@ module.exports ={
     },
     // Simpan data kurir
     adddatakurir(req,res){
+        var uid = crypto.generate({length: 50}) + new Date().toISOString().replace(/T/, '').replace(/\..+/, '').replace(/-/, '').replace(/-/, '').replace(/:/, '').replace(/:/, '');
         let data = {
-            id_kurir : req.body.id,
+            id_kurir : uid,
             nama_kurir : req.body.nama,
             jen_kel : req.body.jenkel,
-            foto_ktp : req.file.fotoktp,
-            foto_formal : req.file.fotoformal,
+            foto_ktp : req.file.filename,
+            foto_formal : req.file.filename,
             no_telp : req.body.notelp,
             username : req.body.username,
             password : req.body.password
@@ -81,8 +84,8 @@ module.exports ={
         let dataEdit = {
             nama_kurir : req.body.nama,
             jen_kel : req.body.jenkel,
-            foto_ktp : req.file.fotoktp,
-            foto_formal : req.file.fotoformal,
+            // foto_ktp : req.file.filename,
+            // foto_formal : req.file.filename,
             no_telp : req.body.notelp,
             username : req.body.username,
             password : req.body.password

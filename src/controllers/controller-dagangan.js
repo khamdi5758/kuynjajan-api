@@ -1,6 +1,7 @@
 const config = require('../configs/database');
 const mysql = require('mysql');
 const pool = mysql.createPool(config);
+const crypto = require('randomstring');
 
 pool.on('error',(err)=> {
     console.error(err);
@@ -49,12 +50,15 @@ module.exports ={
     },
     // Simpan data dagangan
     adddatadagangan(req,res){
+        var uid = crypto.generate({length: 50}) + new Date().toISOString().replace(/T/, '').replace(/\..+/, '').replace(/-/, '').replace(/-/, '').replace(/:/, '').replace(/:/, '');
         let data = {
-            id_barang : req.body.id,
+            id_barang : uid,
             nama : req.body.nama,
             jenis : req.body.jenis,
             asal : req.body.asal,
             harga : req.body.harga,
+            deskripsi : req.body.deskripsi,
+            foto_dagangan : req.file.filename,
             id_pedagang : req.body.idpedagang
         }
         pool.getConnection(function(err, connection) {
@@ -81,6 +85,8 @@ module.exports ={
             jenis : req.body.jenis,
             asal : req.body.asal,
             harga : req.body.harga,
+            deskripsi : req.body.deskripsi,
+            // foto_dagangan : req.file.filename,
             id_pedagang : req.body.idpedagang
         }
         let id = req.params.id
