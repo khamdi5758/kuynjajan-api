@@ -1,18 +1,10 @@
-const config = require('../configs/database');
-const mysql = require('mysql');
+const db = require('../configs/database_config');
 const crypto = require('randomstring');
-const pool = mysql.createPool(config);
-
-pool.on('error',(err)=> {
-    console.error(err);
-}); 
 
 module.exports ={
     // Ambil data semua pembeli
     getdatapembeli(req,res){
-        pool.getConnection(function(err, connection) {
-            if (err) throw err;
-            connection.query(
+            db.query(
                 `
                 SELECT * FROM tb_pembeli;
                 `
@@ -24,15 +16,12 @@ module.exports ={
                     pembeli: results 
                 });
             });
-            connection.release();
-        })
+        
     },
     // Ambil data pembeli berdasarkan ID
     getdatapembelibyid(req,res){
         let id = req.params.id;
-        pool.getConnection(function(err, connection) {
-            if (err) throw err;
-            connection.query(
+                    db.query(
                 `
                 SELECT * FROM tb_pembeli WHERE id_pembeli = ?;
                 `
@@ -45,16 +34,12 @@ module.exports ={
                     pembeli: results,
                 });
             });
-            connection.release();
-        })
     },
 
     getdatapembelibyidduand(req,res){
         let id = req.params.id;
         let namfoto;
-        pool.getConnection(function(err, connection) {
-            if (err) throw err;
-            connection.query(
+            db.query(
                 `
                 SELECT * FROM tb_pembeli WHERE id_pembeli = ?;
                 `
@@ -74,8 +59,6 @@ module.exports ={
                 });
                 console.log(namfoto);
             });
-            connection.release();
-        })
         
     },
     // Simpan data pembeli
@@ -93,9 +76,7 @@ module.exports ={
             password : req.body.password
         }
 
-        pool.getConnection(function(err, connection) {
-            if (err) throw err;
-            connection.query(
+            db.query(
                 `
                 INSERT INTO tb_pembeli SET ?;
                 `
@@ -107,51 +88,77 @@ module.exports ={
                     message: 'Berhasil tambah data!',
                 });
             });
-            connection.release();
-        })
     },
 
     // Update data pembeli
     editdatapembeli(req,res){
-        pool.getConnection(function(err, connection) {
         let id = req.params.id
-        let fotprof;
+        let namfoto
 
         if (!req.file) {
+            db.query(
+                `
+                SELECT * FROM tb_pembeli WHERE id_pembeli = ?;
+                `
+            , [id],
+            function (error, results) {
+                if(error) throw error;  
+                results.forEach((data) => {
+                    namfoto = `${data.foto}`;
+                });
+                
+                    let dataEdit = {
+                        nama : req.body.nama,
+                        jen_kel : req.body.jenkel,
+                        no_telp : req.body.notelp,
+                        foto : namfoto,
+                    username : req.body.username,
+                    password : req.body.password
+                    }
+                    db.query(
+                        `
+                        UPDATE tb_pembeli SET ? WHERE id_pembeli = ?;
+                        `
+                        , [dataEdit, id],
+                        function (error, results) {
+                            if(error) throw error;  
+                            res.send({ 
+                                success: true, 
+                                message: 'Berhasil edit data!',
+                            });
+                        });
+            });
             
-        }
-        let dataEdit = {
-            nama : req.body.nama,
-            jen_kel : req.body.jenkel,
-            no_telp : req.body.notelp,
-            foto : fotprof,
+
+
+        } else{
+            
+            let dataEdit = {
+                nama : req.body.nama,
+                jen_kel : req.body.jenkel,
+                no_telp : req.body.notelp,
+                foto : req.file.filename,
             username : req.body.username,
             password : req.body.password
-        }
-        
-        
-            if (err) throw err;
-            connection.query(
+            }
+            db.query(
                 `
                 UPDATE tb_pembeli SET ? WHERE id_pembeli = ?;
                 `
-            , [dataEdit, id],
-            function (error, results) {
-                if(error) throw error;  
-                res.send({ 
-                    success: true, 
-                    message: 'Berhasil edit data!',
+                , [dataEdit, id],
+                function (error, results) {
+                    if(error) throw error;  
+                    res.send({ 
+                        success: true, 
+                        message: 'Berhasil edit data!',
+                    });
                 });
-            });
-            connection.release();
-        })
+        }
     },
     // Delete data pembeli
     deletedatapembeli(req,res){
-        let id = req.params.id
-        pool.getConnection(function(err, connection) {
-            if (err) throw err;
-            connection.query(
+        let id = req.params.id;
+            db.query(
                 `
                 DELETE FROM tb_pembeli WHERE id_pembeli = ?;
                 `
@@ -163,7 +170,5 @@ module.exports ={
                     message: 'Berhasil hapus data!'
                 });
             });
-            connection.release();
-        })
     }
 }

@@ -1,18 +1,10 @@
-const config = require('../configs/database');
-const mysql = require('mysql');
-const pool = mysql.createPool(config);
+const db = require('../configs/database_config');
 const crypto = require('randomstring');
-
-pool.on('error',(err)=> {
-    console.error(err);
-});
 
 module.exports ={
     // Ambil data semua orders
     getdataorders(req,res){
-        pool.getConnection(function(err, connection) {
-            if (err) throw err;
-            connection.query(
+        db.query(
                 `
                 SELECT * FROM tb_orders;
                 `
@@ -24,15 +16,11 @@ module.exports ={
                     data: results 
                 });
             });
-            connection.release();
-        })
     },
     // Ambil data orders berdasarkan ID
     getdataordersbyid(req,res){
         let id = req.params.id;
-        pool.getConnection(function(err, connection) {
-            if (err) throw err;
-            connection.query(
+        db.query(
                 `
                 SELECT * FROM tb_orders WHERE id_orders = ?;
                 `
@@ -45,8 +33,6 @@ module.exports ={
                     data: results
                 });
             });
-            connection.release();
-        })
     },
     // Simpan data orders
     adddataorders(req,res){
@@ -60,9 +46,7 @@ module.exports ={
             alamat_kirim : req.body.alamatkirim,
             id_kurir : req.body.idkurir
         }
-        pool.getConnection(function(err, connection) {
-            if (err) throw err;
-            connection.query(
+        db.query(
                 `
                 INSERT INTO tb_orders SET ?;
                 `
@@ -74,8 +58,6 @@ module.exports ={
                     message: 'Berhasil tambah data!',
                 });
             });
-            connection.release();
-        })
     },
     // Update data orders
     editdataorders(req,res){
@@ -88,9 +70,7 @@ module.exports ={
             id_kurir : req.body.idkurir
         }
         let id = req.params.id
-        pool.getConnection(function(err, connection) {
-            if (err) throw err;
-            connection.query(
+            db.query(
                 `
                 UPDATE tb_orders SET ? WHERE id_orders = ?;
                 `
@@ -102,15 +82,11 @@ module.exports ={
                     message: 'Berhasil edit data!',
                 });
             });
-            connection.release();
-        })
     },
     // Delete data orders
     deletedataorders(req,res){
         let id = req.params.id
-        pool.getConnection(function(err, connection) {
-            if (err) throw err;
-            connection.query(
+            db.query(
                 `
                 DELETE FROM tb_orders WHERE id_orders = ?;
                 `
@@ -122,7 +98,5 @@ module.exports ={
                     message: 'Berhasil hapus data!'
                 });
             });
-            connection.release();
-        })
     }
 }

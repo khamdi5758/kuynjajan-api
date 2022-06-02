@@ -1,19 +1,10 @@
-const config = require('../configs/database');
-const mysql = require('mysql');
-const pool = mysql.createPool(config);
+const db = require('../configs/database_config');
 const crypto = require('randomstring');
-
-
-pool.on('error',(err)=> {
-    console.error(err);
-});
 
 module.exports ={
     // Ambil data semua kurir
     getdatakurir(req,res){
-        pool.getConnection(function(err, connection) {
-            if (err) throw err;
-            connection.query(
+            db.query(
                 `
                 SELECT * FROM tb_kurir;
                 `
@@ -25,15 +16,11 @@ module.exports ={
                     data: results 
                 });
             });
-            connection.release();
-        })
     },
     // Ambil data kurir berdasarkan ID
     getdatakurirbyid(req,res){
         let id = req.params.id;
-        pool.getConnection(function(err, connection) {
-            if (err) throw err;
-            connection.query(
+            db.query(
                 `
                 SELECT * FROM tb_kurir WHERE id_kurir = ?;
                 `
@@ -46,8 +33,6 @@ module.exports ={
                     data: results
                 });
             });
-            connection.release();
-        })
     },
     // Simpan data kurir
     adddatakurir(req,res){
@@ -62,9 +47,7 @@ module.exports ={
             username : req.body.username,
             password : req.body.password
         }
-        pool.getConnection(function(err, connection) {
-            if (err) throw err;
-            connection.query(
+            db.query(
                 `
                 INSERT INTO tb_kurir SET ?;
                 `
@@ -76,8 +59,6 @@ module.exports ={
                     message: 'Berhasil tambah data!',
                 });
             });
-            connection.release();
-        })
     },
     // Update data kurir
     editdatakurir(req,res){
@@ -91,9 +72,7 @@ module.exports ={
             password : req.body.password
         }
         let id = req.params.id
-        pool.getConnection(function(err, connection) {
-            if (err) throw err;
-            connection.query(
+            db.query(
                 `
                 UPDATE tb_kurir SET ? WHERE id_kurir = ?;
                 `
@@ -105,15 +84,11 @@ module.exports ={
                     message: 'Berhasil edit data!',
                 });
             });
-            connection.release();
-        })
     },
     // Delete data kurir
     deletedatakurir(req,res){
         let id = req.params.id
-        pool.getConnection(function(err, connection) {
-            if (err) throw err;
-            connection.query(
+            db.query(
                 `
                 DELETE FROM tb_kurir WHERE id_kurir = ?;
                 `
@@ -125,7 +100,5 @@ module.exports ={
                     message: 'Berhasil hapus data!'
                 });
             });
-            connection.release();
-        })
     }
 }

@@ -1,18 +1,12 @@
-const config = require('../configs/database');
-const mysql = require('mysql');
-const pool = mysql.createPool(config);
+const db = require('../configs/database_config');
 const crypto = require('randomstring');
-
-pool.on('error',(err)=> {
-    console.error(err);
-});
+const { CLIENT_CONNECT_WITH_DB } = require('mysql/lib/protocol/constants/client');
 
 module.exports ={
     // Ambil data semua pedagang
     getdatapedagang(req,res){
-        pool.getConnection(function(err, connection) {
-            if (err) throw err;
-            connection.query(
+        
+            db.query(
                 `
                 SELECT * FROM tb_pedagang;
                 `
@@ -24,15 +18,11 @@ module.exports ={
                     data: results 
                 });
             });
-            connection.release();
-        })
     },
     // Ambil data pedagang berdasarkan ID
     getdatapedagangbyid(req,res){
         let id = req.params.id;
-        pool.getConnection(function(err, connection) {
-            if (err) throw err;
-            connection.query(
+            db.query(
                 `
                 SELECT * FROM tb_pedagang WHERE id_pedagang = ?;
                 `
@@ -45,8 +35,6 @@ module.exports ={
                     data: results
                 });
             });
-            connection.release();
-        })
     },
     // Simpan data pedagang
     adddatapedagang(req,res){
@@ -60,9 +48,7 @@ module.exports ={
             username : req.body.username,
             password : req.body.password
         }
-        pool.getConnection(function(err, connection) {
-            if (err) throw err;
-            connection.query(
+        db.query(
                 `
                 INSERT INTO tb_pedagang SET ?;
                 `
@@ -74,23 +60,24 @@ module.exports ={
                     message: 'Berhasil tambah data!',
                 });
             });
-            connection.release();
-        })
     },
     // Update data pedagang
     editdatapedagang(req,res){
-        let dataEdit = {
-            nama_pedagang : req.body.nama,
-            alamat_usaha : req.body.alamat,
-            // foto_usaha : req.file.filename,
-            no_telp : req.body.notelp,
-            username : req.body.username,
-            password : req.body.password
-        }
         let id = req.params.id
-        pool.getConnection(function(err, connection) {
-            if (err) throw err;
-            connection.query(
+        let namfoto
+
+        if (!req.file) {
+            
+            let dataEdit = {
+                nama_pedagang : req.body.nama,
+                alamat_usaha : req.body.alamat,
+                foto_usaha : namfoto,
+                no_telp : req.body.notelp,
+                username : req.body.username,
+                password : req.body.password
+            }
+        
+            db.query(
                 `
                 UPDATE tb_pedagang SET ? WHERE id_pedagang = ?;
                 `
@@ -102,15 +89,37 @@ module.exports ={
                     message: 'Berhasil edit data!',
                 });
             });
-            connection.release();
-        })
+
+        } else{
+
+            let dataEdit = {
+                nama_pedagang : req.body.nama,
+                alamat_usaha : req.body.alamat,
+                foto_usaha : req.file.filename,
+                no_telp : req.body.notelp,
+                username : req.body.username,
+                password : req.body.password
+            }
+        
+            db.query(
+                `
+                UPDATE tb_pedagang SET ? WHERE id_pedagang = ?;
+                `
+            , [dataEdit, id],
+            function (error, results) {
+                if(error) throw error;  
+                res.send({ 
+                    success: true, 
+                    message: 'Berhasil edit data!',
+                });
+            });
+        }
+
     },
     // Delete data pedagang
     deletedatapedagang(req,res){
         let id = req.params.id
-        pool.getConnection(function(err, connection) {
-            if (err) throw err;
-            connection.query(
+            db.query(
                 `
                 DELETE FROM tb_pedagang WHERE id_pedagang = ?;
                 `
@@ -122,7 +131,5 @@ module.exports ={
                     message: 'Berhasil hapus data!'
                 });
             });
-            connection.release();
-        })
     }
 }

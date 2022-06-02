@@ -1,14 +1,9 @@
-const config = require('./src/configs/database');
-const mysql = require('mysql');
-const pool = mysql.createPool(config);
+const db = require('./src/configs/database_config');
 
-pool.on('error',(err)=> {
-    console.error(err);
-}); 
 
 const sql = "SELECT * FROM pembeli";
 
-pool.query(sql, function (err, result) {
+db.query(sql, function (err, result) {
     if (err) throw err;
     console.log(result);
 });

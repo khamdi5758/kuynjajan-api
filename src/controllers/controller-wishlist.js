@@ -1,17 +1,9 @@
-const config = require('../configs/database');
-const mysql = require('mysql');
-const pool = mysql.createPool(config);
-
-pool.on('error',(err)=> {
-    console.error(err);
-});
+const db = require('../configs/database_config');
 
 module.exports ={
     // Ambil data semua wishlist
     getdatawishlist(req,res){
-        pool.getConnection(function(err, connection) {
-            if (err) throw err;
-            connection.query(
+            db.query(
                 `
                 SELECT * FROM tb_wishlist;
                 `
@@ -23,15 +15,11 @@ module.exports ={
                     data: results 
                 });
             });
-            connection.release();
-        })
     },
     // Ambil data wishlist berdasarkan ID
     getdatawishlistbyid(req,res){
         let id = req.params.id;
-        pool.getConnection(function(err, connection) {
-            if (err) throw err;
-            connection.query(
+            db.query(
                 `
                 SELECT * FROM tb_wishlist WHERE id_pembeli = ?;
                 `
@@ -44,8 +32,6 @@ module.exports ={
                     data: results
                 });
             });
-            connection.release();
-        })
     },
     // Simpan data wishlist
     adddatawishlist(req,res){
@@ -53,9 +39,7 @@ module.exports ={
             id_pembeli : req.body.idpembeli,
             id_barang : req.body.idbarang
         }
-        pool.getConnection(function(err, connection) {
-            if (err) throw err;
-            connection.query(
+            db.query(
                 `
                 INSERT INTO tb_wishlist SET ?;
                 `
@@ -67,16 +51,12 @@ module.exports ={
                     message: 'Berhasil tambah data!',
                 });
             });
-            connection.release();
-        })
     },
     // Delete data wishlist
     deletedatawishlist(req,res){
             let id_pembeli = req.params.idpembeli;
             let id_barang = req.params.idbarang;
-        pool.getConnection(function(err, connection) {
-            if (err) throw err;
-            connection.query(
+            db.query(
                 `
                 DELETE FROM tb_wishlist WHERE id_pembeli =? and id_barang = ? ;
                 `
@@ -88,7 +68,5 @@ module.exports ={
                     message: 'Berhasil hapus data!'
                 });
             });
-            connection.release();
-        })
     }
 }
