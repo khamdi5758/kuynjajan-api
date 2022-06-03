@@ -40,7 +40,7 @@ module.exports ={
         let data = {
             id_orders : req.body.uid,
             id_barang : req.body.idbarang,
-            id_pembeli : req.body.idpembeli,
+            id_user : req.body.iduser,
             jumlah : req.body.jumlah,
             total : req.body.total,
             alamat_kirim : req.body.alamatkirim,
@@ -63,7 +63,7 @@ module.exports ={
     editdataorders(req,res){
         let dataEdit = {
             id_barang : req.body.idbarang,
-            id_pembeli : req.body.idpembeli,
+            id_user : req.body.iduser,
             jumlah : req.body.jumlah,
             total : req.body.total,
             alamat_kirim : req.body.alamatkirim,

@@ -3,12 +3,12 @@ const crypto = require('randomstring');
 const { CLIENT_CONNECT_WITH_DB } = require('mysql/lib/protocol/constants/client');
 
 module.exports ={
-    // Ambil data semua pedagang
-    getdatapedagang(req,res){
+    // Ambil data semua toko
+    getdatatoko(req,res){
         
             db.query(
                 `
-                SELECT * FROM tb_pedagang;
+                SELECT * FROM tb_toko;
                 `
             , function (error, results) {
                 if(error) throw error;  
@@ -19,12 +19,12 @@ module.exports ={
                 });
             });
     },
-    // Ambil data pedagang berdasarkan ID
-    getdatapedagangbyid(req,res){
+    // Ambil data toko berdasarkan ID
+    getdatatokobyid(req,res){
         let id = req.params.id;
             db.query(
                 `
-                SELECT * FROM tb_pedagang WHERE id_pedagang = ?;
+                SELECT * FROM tb_toko WHERE id_toko = ?;
                 `
             , [id],
             function (error, results) {
@@ -36,21 +36,20 @@ module.exports ={
                 });
             });
     },
-    // Simpan data pedagang
-    adddatapedagang(req,res){
+    // Simpan data toko
+    adddatatoko(req,res){
         var uid = crypto.generate({length: 50}) + new Date().toISOString().replace(/T/, '').replace(/\..+/, '').replace(/-/, '').replace(/-/, '').replace(/:/, '').replace(/:/, '');
         let data = {
-            id_pedagang : uid,
-            nama_pedagang : req.body.nama,
-            alamat_usaha : req.body.alamat,
-            foto_usaha : req.file.filename,
+            id_toko : uid,
+            nama_toko : req.body.nama,
+            alamat_toko : req.body.alamat,
+            foto_toko : req.file.filename,
             no_telp : req.body.notelp,
-            username : req.body.username,
-            password : req.body.password
+            id_user : req.body.iduser
         }
         db.query(
                 `
-                INSERT INTO tb_pedagang SET ?;
+                INSERT INTO tb_toko SET ?;
                 `
             , [data],
             function (error, results) {
@@ -61,49 +60,57 @@ module.exports ={
                 });
             });
     },
-    // Update data pedagang
-    editdatapedagang(req,res){
+    // Update data toko
+    editdatatoko(req,res){
         let id = req.params.id
         let namfoto
 
         if (!req.file) {
-            
-            let dataEdit = {
-                nama_pedagang : req.body.nama,
-                alamat_usaha : req.body.alamat,
-                foto_usaha : namfoto,
-                no_telp : req.body.notelp,
-                username : req.body.username,
-                password : req.body.password
-            }
-        
             db.query(
                 `
-                UPDATE tb_pedagang SET ? WHERE id_pedagang = ?;
+                SELECT * FROM tb_toko WHERE id_toko = ?;
                 `
-            , [dataEdit, id],
+            , [id],
             function (error, results) {
                 if(error) throw error;  
-                res.send({ 
-                    success: true, 
-                    message: 'Berhasil edit data!',
+                results.forEach((data) => {
+                    namfoto = `${data.foto_toko}`;
+                });
+                let dataEdit = {
+                    nama_toko : req.body.nama,
+                    alamat_toko : req.body.alamat,
+                    foto_toko : namfoto,
+                    no_telp : req.body.notelp,
+                    id_user : req.body.iduser
+                }
+        
+                db.query(
+                    `
+                    UPDATE tb_toko SET ? WHERE id_toko = ?;
+                    `
+                , [dataEdit, id],
+                function (error, results) {
+                    if(error) throw error;  
+                    res.send({ 
+                        success: true, 
+                        message: 'Berhasil edit data!',
+                    });
                 });
             });
 
         } else{
 
             let dataEdit = {
-                nama_pedagang : req.body.nama,
-                alamat_usaha : req.body.alamat,
-                foto_usaha : req.file.filename,
+                nama_toko : req.body.nama,
+                alamat_toko : req.body.alamat,
+                foto_toko : req.file.filename,
                 no_telp : req.body.notelp,
-                username : req.body.username,
-                password : req.body.password
+                id_user : req.body.iduser
             }
         
             db.query(
                 `
-                UPDATE tb_pedagang SET ? WHERE id_pedagang = ?;
+                UPDATE tb_toko SET ? WHERE id_toko = ?;
                 `
             , [dataEdit, id],
             function (error, results) {
@@ -116,12 +123,12 @@ module.exports ={
         }
 
     },
-    // Delete data pedagang
-    deletedatapedagang(req,res){
+    // Delete data toko
+    deletedatatoko(req,res){
         let id = req.params.id
             db.query(
                 `
-                DELETE FROM tb_pedagang WHERE id_pedagang = ?;
+                DELETE FROM tb_toko WHERE id_toko = ?;
                 `
             , [id],
             function (error, results) {

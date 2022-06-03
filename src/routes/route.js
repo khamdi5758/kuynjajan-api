@@ -1,7 +1,7 @@
 const router = require('express').Router();
 const multer = require('multer');
 const path = require('path');
-const {pembeli,pedagang,kurir,dagangan,wishlist,orders } = require('../controllers');
+const {user,toko,kurir,dagangan,wishlist,orders } = require('../controllers');
 
 // const storage = multer.diskStorage({
 //     destination:'./src/images/',
@@ -41,39 +41,39 @@ const upload = multer({
 // DELETE localhost:8080/karyawan/delete/2 => Delete data karyawan berdasarkan id = 2
 
 
-router.get('/pembeli/get', pembeli.getdatapembeli);
-router.get('/pembeli/get/:id', pembeli.getdatapembelibyid);
-router.get('/pembeli/cari/:id', pembeli.getdatapembelibyidduand);
-router.post('/pembeli/add',upload.single('foto'), pembeli.adddatapembeli);
-router.put('/pembeli/edit/:id',upload.single('foto'), pembeli.editdatapembeli);
-router.delete('/pembeli/delete/:id', pembeli.deletedatapembeli);
+router.get('/user/', user.getdatauser);
+router.get('/user/:id', user.getdatauserbyid);
+router.get('/user/:id', user.getdatauserbyusername);
+router.post('/user/',upload.single('foto'), user.adddatauser);
+router.put('/user/:id',upload.single('foto'), user.editdatauser);
+router.delete('/user/:id', user.deletedatauser);
 
 
-router.get('/pedagang/get', pedagang.getdatapedagang);
-router.get('/pedagang/get/:id', pedagang.getdatapedagangbyid);
-router.post('/pedagang/add',upload.single('foto_usaha'), pedagang.adddatapedagang);
-router.put('/pedagang/edit/:id',upload.single('foto_usaha'), pedagang.editdatapedagang);
-router.delete('/pedagang/delete/:id', pedagang.deletedatapedagang);
+router.get('/toko/', toko.getdatatoko);
+router.get('/toko/:id', toko.getdatatokobyid);
+router.post('/toko/',upload.single('foto_toko'), toko.adddatatoko);
+router.put('/toko/:id',upload.single('foto_toko'), toko.editdatatoko);
+router.delete('/toko/:id', toko.deletedatatoko);
 
 
-router.get('/dagangan/get', dagangan.getdatadagangan);
-router.get('/dagangan/get/:id', dagangan.getdatadaganganbyid);
-router.post('/dagangan/add',upload.single('foto_dagangan'), dagangan.adddatadagangan);
-router.put('/dagangan/edit/:id',upload.single('foto_dagangan'), dagangan.editdatadagangan);
-router.delete('/dagangan/delete/:id', dagangan.deletedatadagangan);
+router.get('/dagangan/', dagangan.getdatadagangan);
+router.get('/dagangan/:id', dagangan.getdatadaganganbyid);
+router.post('/dagangan/',upload.single('foto_dagangan'), dagangan.adddatadagangan);
+router.put('/dagangan/:id',upload.single('foto_dagangan'), dagangan.editdatadagangan);
+router.delete('/dagangan/:id', dagangan.deletedatadagangan);
 
 
 router.get('/wishlist', wishlist.getdatawishlist);
 router.get('/wishlist/:id', wishlist.getdatawishlistbyid);
-router.post('/wishlist/add', wishlist.adddatawishlist);
-router.delete('/wishlist/delete/:idpembeli/:idbarang', wishlist.deletedatawishlist);
+router.post('/wishlist/', wishlist.adddatawishlist);
+router.delete('/wishlist/:iduser/:idbarang', wishlist.deletedatawishlist);
 
 
 router.get('/orders', orders.getdataorders);
 router.get('/orders/:id', orders.getdataordersbyid);
-router.post('/orders/add', orders.adddataorders);
-router.put('/orders/edit/:id', orders.editdataorders);
-router.delete('/orders/delete/:id', orders.deletedataorders);
+router.post('/orders/', orders.adddataorders);
+router.put('/orders/:id', orders.editdataorders);
+router.delete('/orders/:id', orders.deletedataorders);
 
 // router.get('/kurir/get', kurir.getdatakurir);
 // router.get('/kurir/get/:id', kurir.getdatakurirbyid);

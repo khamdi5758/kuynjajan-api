@@ -45,7 +45,7 @@ module.exports ={
             harga : req.body.harga,
             deskripsi : req.body.deskripsi,
             foto_dagangan : req.file.filename,
-            id_pedagang : req.body.idpedagang
+            id_toko : req.body.idtoko
         }
             db.query(
                 `
@@ -66,26 +66,36 @@ module.exports ={
         let namfoto
 
         if (!req.file) {
-
-            let dataEdit = {
-                nama : req.body.nama,
-                jenis : req.body.jenis,
-                asal : req.body.asal,
-                harga : req.body.harga,
-                deskripsi : req.body.deskripsi,
-                foto_dagangan : namfoto,
-                id_pedagang : req.body.idpedagang
-            }
             db.query(
                 `
-                UPDATE tb_dagangan SET ? WHERE id_barang = ?;
+                SELECT * FROM tb_dagangan WHERE id_barang = ?;
                 `
-            , [dataEdit, id],
+            , [id],
             function (error, results) {
                 if(error) throw error;  
-                res.send({ 
-                    success: true, 
-                    message: 'Berhasil edit data!',
+                results.forEach((data) => {
+                    namfoto = `${data.foto_dagangan}`;
+                });
+                let dataEdit = {
+                    nama : req.body.nama,
+                    jenis : req.body.jenis,
+                    asal : req.body.asal,
+                    harga : req.body.harga,
+                    deskripsi : req.body.deskripsi,
+                    foto_dagangan : namfoto,
+                    id_toko : req.body.idtoko
+                }
+                db.query(
+                    `
+                    UPDATE tb_dagangan SET ? WHERE id_barang = ?;
+                    `
+                , [dataEdit, id],
+                function (error, results) {
+                    if(error) throw error;  
+                    res.send({ 
+                        success: true, 
+                        message: 'Berhasil edit data!',
+                    });
                 });
             });
 
@@ -98,7 +108,7 @@ module.exports ={
                 harga : req.body.harga,
                 deskripsi : req.body.deskripsi,
                 foto_dagangan : req.file.filename,
-                id_pedagang : req.body.idpedagang
+                id_toko : req.body.idtoko
             }
             db.query(
                 `

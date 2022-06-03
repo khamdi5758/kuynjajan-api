@@ -21,7 +21,7 @@ module.exports ={
         let id = req.params.id;
             db.query(
                 `
-                SELECT * FROM tb_wishlist WHERE id_pembeli = ?;
+                SELECT * FROM tb_wishlist WHERE id_user = ?;
                 `
             , [id],
             function (error, results) {
@@ -36,7 +36,7 @@ module.exports ={
     // Simpan data wishlist
     adddatawishlist(req,res){
         let data = {
-            id_pembeli : req.body.idpembeli,
+            id_user : req.body.iduser,
             id_barang : req.body.idbarang
         }
             db.query(
@@ -54,13 +54,13 @@ module.exports ={
     },
     // Delete data wishlist
     deletedatawishlist(req,res){
-            let id_pembeli = req.params.idpembeli;
+            let id_user = req.params.iduser;
             let id_barang = req.params.idbarang;
             db.query(
                 `
-                DELETE FROM tb_wishlist WHERE id_pembeli =? and id_barang = ? ;
+                DELETE FROM tb_wishlist WHERE id_user =? and id_barang = ? ;
                 `
-            , [id_pembeli,id_barang],
+            , [id_user,id_barang],
             function (error, results) {
                 if(error) throw error;  
                 res.send({ 

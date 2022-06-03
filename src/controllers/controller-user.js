@@ -2,28 +2,28 @@ const db = require('../configs/database_config');
 const crypto = require('randomstring');
 
 module.exports ={
-    // Ambil data semua pembeli
-    getdatapembeli(req,res){
+    // Ambil data semua user
+    getdatauser(req,res){
             db.query(
                 `
-                SELECT * FROM tb_pembeli;
+                SELECT * FROM tb_user;
                 `
             , function (error, results) {
                 if(error) throw error;  
                 res.send({ 
                     success: true, 
                     message: 'Berhasil ambil data!',
-                    pembeli: results 
+                    user: results 
                 });
             });
         
     },
-    // Ambil data pembeli berdasarkan ID
-    getdatapembelibyid(req,res){
+    // Ambil data user berdasarkan ID
+    getdatauserbyid(req,res){
         let id = req.params.id;
                     db.query(
                 `
-                SELECT * FROM tb_pembeli WHERE id_pembeli = ?;
+                SELECT * FROM tb_user WHERE id_user = ?;
                 `
             , [id],
             function (error, results) {
@@ -31,17 +31,17 @@ module.exports ={
                 res.send({ 
                     success: true, 
                     message: 'Berhasil ambil data!',
-                    pembeli: results,
+                    user: results,
                 });
             });
     },
 
-    getdatapembelibyidduand(req,res){
+    getdatauserbyusername(req,res){
         let id = req.params.id;
-        let namfoto;
+        //let namfoto;
             db.query(
                 `
-                SELECT * FROM tb_pembeli WHERE id_pembeli = ?;
+                SELECT * FROM tb_user WHERE username = ?;
                 `
             , [id],
             function (error, results) {
@@ -49,25 +49,25 @@ module.exports ={
                 res.send({ 
                     success: true, 
                     message: 'Berhasil ambil data!',
-                    pembeli: results,
+                    user: results,
                 });
 
-                console.log(results);
-                console.log(`----------------------------------------------------------`);
-                results.forEach((data) => {
-                    namfoto = `${data.foto}`;
-                });
-                console.log(namfoto);
+                // console.log(results);
+                // console.log(`----------------------------------------------------------`);
+                // results.forEach((data) => {
+                //     namfoto = `${data.foto}`;
+                // });
+                // console.log(namfoto);
             });
         
     },
-    // Simpan data pembeli
-    adddatapembeli(req,res){
+    // Simpan data user
+    adddatauser(req,res){
         var uid = crypto.generate({length: 50}) + new Date().toISOString().replace(/T/, '').replace(/\..+/, '').replace(/-/, '').replace(/-/, '').replace(/:/, '').replace(/:/, '');
         
 
         let data = {
-            id_pembeli : uid,
+            id_user : uid,
             nama : req.body.nama,
             jen_kel : req.body.jenkel,
             no_telp : req.body.notelp,
@@ -78,7 +78,7 @@ module.exports ={
 
             db.query(
                 `
-                INSERT INTO tb_pembeli SET ?;
+                INSERT INTO tb_user SET ?;
                 `
             , [data],
             function (error, results) {
@@ -90,15 +90,15 @@ module.exports ={
             });
     },
 
-    // Update data pembeli
-    editdatapembeli(req,res){
+    // Update data user
+    editdatauser(req,res){
         let id = req.params.id
         let namfoto
 
         if (!req.file) {
             db.query(
                 `
-                SELECT * FROM tb_pembeli WHERE id_pembeli = ?;
+                SELECT * FROM tb_user WHERE id_user = ?;
                 `
             , [id],
             function (error, results) {
@@ -112,12 +112,12 @@ module.exports ={
                         jen_kel : req.body.jenkel,
                         no_telp : req.body.notelp,
                         foto : namfoto,
-                    username : req.body.username,
-                    password : req.body.password
+                        username : req.body.username,
+                        password : req.body.password
                     }
                     db.query(
                         `
-                        UPDATE tb_pembeli SET ? WHERE id_pembeli = ?;
+                        UPDATE tb_user SET ? WHERE id_user = ?;
                         `
                         , [dataEdit, id],
                         function (error, results) {
@@ -138,12 +138,12 @@ module.exports ={
                 jen_kel : req.body.jenkel,
                 no_telp : req.body.notelp,
                 foto : req.file.filename,
-            username : req.body.username,
-            password : req.body.password
+                username : req.body.username,
+                password : req.body.password
             }
             db.query(
                 `
-                UPDATE tb_pembeli SET ? WHERE id_pembeli = ?;
+                UPDATE tb_user SET ? WHERE id_user = ?;
                 `
                 , [dataEdit, id],
                 function (error, results) {
@@ -155,12 +155,12 @@ module.exports ={
                 });
         }
     },
-    // Delete data pembeli
-    deletedatapembeli(req,res){
+    // Delete data user
+    deletedatauser(req,res){
         let id = req.params.id;
             db.query(
                 `
-                DELETE FROM tb_pembeli WHERE id_pembeli = ?;
+                DELETE FROM tb_user WHERE id_user = ?;
                 `
             , [id],
             function (error, results) {
